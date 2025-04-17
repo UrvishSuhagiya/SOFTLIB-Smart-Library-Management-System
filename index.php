@@ -36,6 +36,7 @@ if (isset($_POST['login'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets\img\SOFTLIBlogo3.png">
     <title>SOFTLIB Management System</title>
     <link rel="stylesheet" href="bootstrap.css">
     <link rel="stylesheet" href="font-awesome.css">
