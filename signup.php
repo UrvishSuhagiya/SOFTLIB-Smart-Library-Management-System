@@ -227,7 +227,7 @@ if (isset($_POST['signup'])) {
     </nav>
     <div class="login-container">
         <h3>User Signup</h3>
-        <form method="post" action="signup.php">
+        <form method="post" action="./signup.php">
             <input type="text" name="fullname" placeholder="Enter Full Name" required>
             <input type="text" name="enrollmentno" placeholder="Enter Enrollment Number" minlength="11" maxlength="11" required>
             <input type="text" name="mobileno" placeholder="Mobile Number" maxlength="10" required>
