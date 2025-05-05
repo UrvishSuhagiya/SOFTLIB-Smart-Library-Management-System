@@ -72,9 +72,9 @@ if (isset($_POST['signup'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Signup - SOFTLIB Management System</title>
-    <link rel="stylesheet" href="bootstrap.css">
-    <link rel="stylesheet" href="font-awesome.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets\css\bootstrap.css">
+    <link rel="stylesheet" href="assets\css\font-awesome.css">
+    <link rel="stylesheet" href="assets\css\style.css">
     <script type="text/javascript">
         function valid() {
             if (document.signup.password.value != document.signup.confirmpassword.value) {
