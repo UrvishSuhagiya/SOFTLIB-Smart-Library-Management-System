@@ -38,9 +38,9 @@ if (isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image\png" href="assets\img\SOFTLIBlogo3.png">
     <title>SOFTLIB Management System</title>
-    <link rel="stylesheet" href="bootstrap.css">
-    <link rel="stylesheet" href="font-awesome.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets\css\bootstrap.css">
+    <link rel="stylesheet" href="assets\css\font-awesome.css">
+    <link rel="stylesheet" href="assets\css\style.css">
     <style>
         body {
             background: linear-gradient(to top,rgb(252, 252, 252),rgb(228, 241, 252),rgb(215, 232, 246));
