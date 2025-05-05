@@ -13,34 +13,58 @@ if (isset($_POST['signup'])) {
     fclose($fp);
     $StudentId = $hits[0];
 
-    $fname = $_POST['fullname'];
-    $enrollmentno = $_POST['enrollmentno'];
-    $mobileno = $_POST['mobileno'];
-    $email = $_POST['email'];
-    $password = md5($_POST['password']);
+    // Get and sanitize inputs
+    $fname = trim($_POST['fullname']);
+    $enrollmentno = trim($_POST['enrollmentno']);
+    $mobileno = trim($_POST['mobileno']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirmpassword = $_POST['confirmpassword'];
     $status = 1;
 
-    // Updated INSERT query with Enrollment Number
-    $sql = "INSERT INTO tblstudents(StudentId, FullName, EnrollmentNo, MobileNumber, EmailId, Password, Status) 
-            VALUES(:StudentId, :fname, :enrollmentno, :mobileno, :email, :password, :status)";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':StudentId', $StudentId, PDO::PARAM_STR);
-    $query->bindParam(':fname', $fname, PDO::PARAM_STR);
-    $query->bindParam(':enrollmentno', $enrollmentno, PDO::PARAM_STR);
-    $query->bindParam(':mobileno', $mobileno, PDO::PARAM_STR);
-    $query->bindParam(':email', $email, PDO::PARAM_STR);
-    $query->bindParam(':password', $password, PDO::PARAM_STR);
-    $query->bindParam(':status', $status, PDO::PARAM_STR);
-    $query->execute();
-
-    $lastInsertId = $dbh->lastInsertId();
-    if ($lastInsertId) {
-        echo "<script>alert('Your registration was successful. Your student ID is $StudentId');</script>";
+    // Validate password match
+    if ($password !== $confirmpassword) {
+        echo "<script>alert('Password and Confirm Password do not match!');</script>";
+    } elseif (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/", $password)) {
+        echo "<script>alert('Password must be at least 6 characters, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.');</script>";
+    } elseif (!preg_match("/^[0-9]{10}$/", $mobileno)) {
+        echo "<script>alert('Invalid mobile number. It must be 10 digits.');</script>";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "<script>alert('Invalid email address.');</script>";
     } else {
-        echo "<script>alert('Something went wrong. Please try again.');</script>";
+        // Check for duplicate email or enrollment number
+        $check = $dbh->prepare("SELECT * FROM tblstudents WHERE EmailId = :email OR EnrollmentNo = :enrollmentno");
+        $check->bindParam(':email', $email, PDO::PARAM_STR);
+        $check->bindParam(':enrollmentno', $enrollmentno, PDO::PARAM_STR);
+        $check->execute();
+
+        if ($check->rowCount() > 0) {
+            echo "<script>alert('Email or Enrollment Number already exists.');</script>";
+        } else {
+            $hashedPassword = md5($password);
+            $sql = "INSERT INTO tblstudents(StudentId, FullName, EnrollmentNo, MobileNumber, EmailId, Password, Status) 
+                    VALUES(:StudentId, :fname, :enrollmentno, :mobileno, :email, :password, :status)";
+            $query = $dbh->prepare($sql);
+            $query->bindParam(':StudentId', $StudentId, PDO::PARAM_STR);
+            $query->bindParam(':fname', $fname, PDO::PARAM_STR);
+            $query->bindParam(':enrollmentno', $enrollmentno, PDO::PARAM_STR);
+            $query->bindParam(':mobileno', $mobileno, PDO::PARAM_STR);
+            $query->bindParam(':email', $email, PDO::PARAM_STR);
+            $query->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+            $query->bindParam(':status', $status, PDO::PARAM_STR);
+            $query->execute();
+
+            $lastInsertId = $dbh->lastInsertId();
+            if ($lastInsertId) {
+                echo "<script>alert('Your registration was successful. Your student ID is $StudentId');</script>";
+            } else {
+                echo "<script>alert('Something went wrong. Please try again.');</script>";
+            }
+        }
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -66,7 +90,7 @@ if (isset($_POST['signup'])) {
             $("#loaderIcon").show();
             jQuery.ajax({
                 url: "check_availability.php",
-                data: 'emailid=' + $("#emailid").val(),
+                data: 'email=' + $("#email").val(),
                 type: "POST",
                 success: function (data) {
                     $("#user-availability-status").html(data);
@@ -77,6 +101,34 @@ if (isset($_POST['signup'])) {
             });
         }
     </script>
+    <script type="text/javascript">
+        document.querySelector("form").addEventListener("submit", function(e) {
+        var pwd    = document.getElementById("password").value;
+        var cpwd   = document.getElementById("confirmpassword").value;
+        var regex  = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+
+        // 1) Check strength first
+        if (!regex.test(pwd)) {
+        alert(
+            "Password must be at least 6 characters,\n" +
+            "include 1 uppercase, 1 lowercase, 1 number\n" +
+            "and 1 special character."
+        );
+        e.preventDefault();
+        return;
+        }
+
+        // 2) Then check match
+        if (pwd !== cpwd) {
+        alert("Passwords do not match.");
+        e.preventDefault();
+        return;
+        }
+
+        // If we reach here, both checks passed and form will submit
+    });
+    </script>
+
 
     <style>
          body {
@@ -184,8 +236,8 @@ if (isset($_POST['signup'])) {
             <input type="text" name="fullname" placeholder="Enter Full Name" required>
             <input type="text" name="enrollmentno" placeholder="Enter Enrollment Number" minlength="11" maxlength="11" required>
             <input type="text" name="mobileno" placeholder="Mobile Number" maxlength="10" required>
-            <input type="email" name="email" placeholder="Enter Email" required>
-            <input type="password" name="password" placeholder="Enter Password" required>
+            <input type="email" name="email" id="email" placeholder="Enter Email" onBlur="checkAvailability()" required>
+            <input type="password" name="password" placeholder="Password" required>
             <input type="password" name="confirmpassword" placeholder="Confirm Password" required>
             <button type="submit" name="signup" class="btn btn-custom">Sign Up</button>
         </form>
