@@ -102,32 +102,27 @@ if (isset($_POST['signup'])) {
         }
     </script>
     <script type="text/javascript">
-        document.querySelector("form").addEventListener("submit", function(e) {
-        var pwd    = document.getElementById("password").value;
-        var cpwd   = document.getElementById("confirmpassword").value;
-        var regex  = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+        window.onload = function () {
+            document.querySelector("form").addEventListener("submit", function(e) {
+                var pwd = document.getElementById("password").value;
+                var cpwd = document.getElementById("confirmpassword").value;
+                var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-        // 1) Check strength first
-        if (!regex.test(pwd)) {
-        alert(
-            "Password must be at least 6 characters,\n" +
-            "include 1 uppercase, 1 lowercase, 1 number\n" +
-            "and 1 special character."
-        );
-        e.preventDefault();
-        return;
-        }
+                if (!regex.test(pwd)) {
+                    alert("Password must be at least 6 characters,\ninclude 1 uppercase, 1 lowercase, 1 number\nand 1 special character.");
+                    e.preventDefault();
+                    return;
+                }
 
-        // 2) Then check match
-        if (pwd !== cpwd) {
-        alert("Passwords do not match.");
-        e.preventDefault();
-        return;
-        }
-
-        // If we reach here, both checks passed and form will submit
-    });
+                if (pwd !== cpwd) {
+                    alert("Passwords do not match.");
+                    e.preventDefault();
+                    return;
+                }
+            });
+        };
     </script>
+
 
 
     <style>
