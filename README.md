@@ -66,7 +66,7 @@ The project is fully responsive and deployed on AWS EC2, enabling students and a
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/UrvishSuhagiya/SOFTLIB.git
+   git clone https://github.com/UrvishSuhagiya/SOFTLIB-Smart-Library-Management-System.git
 2. **Start Apache & MySQL using XAMPP.**
 
 3. **Import the database:**
