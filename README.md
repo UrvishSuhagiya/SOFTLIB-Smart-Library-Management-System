@@ -14,7 +14,7 @@ The project is fully responsive and deployed on AWS EC2, enabling students and a
 
 ---
 
-### 📱 Mobile View
+### 📱 Mobile View (Using AWS EC2)
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/a34f3e3d-549e-4ea6-b024-c34cbe79c11f" width="240" alt="Mobile View 1" />
